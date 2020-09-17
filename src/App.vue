@@ -2,11 +2,11 @@
   <div id="app">
     <v-app >
       <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,500,700,400italic|Material+Icons">
-      <NavBar v-if="$route.fullPath !== '/registration' || $route.fullPath !== '/payment'"/>
+      <NavBar v-if="$route.fullPath !== '/login'"/>
 
-      <v-content>
+      <v-main>
         <router-view :key="$route.fullPath"/>
-      </v-content>
+      </v-main>
     </v-app>
   </div>
 </template>
@@ -27,6 +27,10 @@
 
 <style lang="scss">
   @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
+
+  :root {
+    --main-color: #1768AC;
+  }
 
   * {
     box-sizing: border-box;

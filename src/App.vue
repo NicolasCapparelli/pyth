@@ -2,7 +2,7 @@
   <div id="app">
     <v-app >
       <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,500,700,400italic|Material+Icons">
-      <NavBar v-if="$route.fullPath !== '/login' && $route.fullPath !== '/dashr'"/>
+      <NavBar v-if="showNav"/>
 
       <v-main>
         <router-view :key="$route.fullPath"/>
@@ -18,6 +18,12 @@
     name: 'App',
     components: {
       NavBar
+    },
+
+    computed: {
+      showNav: function () {
+        return this.$route.fullPath !== '/login' && this.$route.fullPath !== '/dashr' && this.$route.fullPath !== '/dashh';
+      }
     },
 
     methods: {

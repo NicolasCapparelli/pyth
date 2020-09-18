@@ -2,7 +2,7 @@
   <div id="app">
     <v-app >
       <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,500,700,400italic|Material+Icons">
-      <NavBar v-if="$route.fullPath !== '/login'"/>
+      <NavBar v-if="$route.fullPath !== '/login' && $route.fullPath !== '/dashr'"/>
 
       <v-main>
         <router-view :key="$route.fullPath"/>
@@ -30,6 +30,11 @@
 
   :root {
     --main-color: #1768AC;
+    --dashboard-background: #FAFAFA;
+
+    /* Persona Colors  */
+    --risk-main: salmon;
+    --policy-holder-main: #516db6;
   }
 
   * {
@@ -53,6 +58,16 @@
   }
 
   .page {
-    padding: 16px
+    padding: 32px;
+  }
+
+  .dashboard {
+    background-color: var(--dashboard-background);
+  }
+
+  .widget {
+    padding: 16px;
+    border-radius: 4px;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.20);
   }
 </style>

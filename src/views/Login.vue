@@ -75,7 +75,7 @@
                         break;
                     case 1:
                         console.log("Director");
-                        route = "Dashboard";
+                        route = "DashR";
                         break;
                     case 2:
                         console.log("Admin");

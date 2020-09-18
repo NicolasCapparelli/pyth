@@ -96,6 +96,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: space-between;
+        margin-right: 4rem;
     }
 
     #main-content {

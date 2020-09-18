@@ -18,7 +18,7 @@
             ></v-text-field>
 
             <v-btn
-                    v-on:click="submit"
+                    v-on:click="login"
                     id="login-button">Login</v-btn>
         </div>
     </div>
@@ -36,17 +36,57 @@
         }),
 
         methods: {
-            submit: function () {
+            login: function () {
                 firebase
                     .auth()
                     .signInWithEmailAndPassword(this.email, this.password)
                     .then(data => {
-                        console.log(data);
-                        this.$router.replace({ name: "Dashboard" });
+                        this.routeUser(parseInt(data.user.displayName))
                     })
                     .catch(err => {
                         console.log(err.message);
                     });
+            },
+
+            register: function () {
+                firebase
+                    .auth()
+                    .createUserWithEmailAndPassword(this.email, this.password)
+                    .then(data => {
+                        data.user
+                            .updateProfile({
+                                displayName: "0",
+                            })
+                            .then(() => {
+                                console.log(data);
+                            });
+                    })
+                    .catch(err => {
+                        this.error = err.message;
+                    });
+            },
+
+            routeUser(userType){
+                let route;
+                switch (userType) {
+                    case 0:
+                        console.log("Doctor");
+                        route = "Dashboard";
+                        break;
+                    case 1:
+                        console.log("Director");
+                        route = "Dashboard";
+                        break;
+                    case 2:
+                        console.log("Admin");
+                        route = "Dashboard";
+                        break;
+
+                    default:
+                        alert("Invalid User Type")
+                        return;
+                }
+                this.$router.replace({ name: route });
             }
         }
     }
@@ -62,7 +102,7 @@
     }
 
     #login-box {
-        height: 400px;
+        height: auto;
         width: 400px;
 
         display: flex;
@@ -84,9 +124,11 @@
     .login-input {
         margin-top: 0.2rem;
         width: 100%;
+        flex: none !important;
     }
 
     #login-button {
+        margin-top: 3rem;
         width: 80%;
         color: white;
         background-color: var(--main-color);

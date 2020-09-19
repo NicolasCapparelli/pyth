@@ -22,7 +22,7 @@
 
     computed: {
       showNav: function () {
-        return this.$route.fullPath !== '/login' && this.$route.fullPath !== '/dashr' && this.$route.fullPath !== '/dashh';
+        return this.$route.fullPath !== '/login' && this.$route.fullPath !== '/dashr' && this.$route.fullPath !== '/dashh' && this.$route.fullPath !== '/';
       }
     },
 

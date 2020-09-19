@@ -2,20 +2,28 @@
     <div class="widget assessment-container"
          :style="[isEmpty? {'justify-content': 'center'} : {'justify-content': 'flex-start'}]"
     >
-        <div id="empty-state-container">
+        <div v-if="isEmpty" id="empty-state-container">
             <v-icon id="empty-icon">mdi-selection-ellipse-arrow-inside</v-icon>
             <span>Select a form from Pending Assessments or Submitted Assessments to view it here</span>
         </div>
+
+        <Assessment v-else/>
     </div>
 </template>
 
 <script>
-    export default {
-        name: "AssessmentContainer",
-        data: () => ({
-           isEmpty: true
-        }),
-    }
+
+import Assessment from "./sub-components/Assessment";
+
+export default {
+    name: "AssessmentContainer",
+    components: {
+        Assessment
+    },
+    data: () => ({
+       isEmpty: false
+    }),
+}
 </script>
 
 <style scoped>

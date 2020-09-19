@@ -1,15 +1,18 @@
 <template>
     <div class="page" id="risk-home">
+
         <AssessmentList
             id="al"
             :info="pendingInfo"
             :assessments="pendingAssessments"
         />
+
         <AssessmentList
             id="al2"
             :info="completedInfo"
             :assessments="completedAssessments"
         />
+
         <AssessmentContainer id="AC"/>
     </div>
 </template>
@@ -33,6 +36,8 @@ export default {
     },
 
     data: () => ({
+
+        // PENDING
         pendingInfo: {
             title: "Pending Assessments",
             subtitleWord: "Received",
@@ -40,10 +45,12 @@ export default {
 
         },
         pendingAssessments: [
-            "Lorem",
-            "Dolor"
+            {
+                formId: ""
+            }
         ],
 
+        // COMPLETED
         completedInfo: {
             title: "Submitted Assessments",
             subtitleWord: "Submitted",
@@ -51,7 +58,9 @@ export default {
 
         },
         completedAssessments: [
-            "Ipsum"
+            {
+                formId: ""
+            }
         ],
     }),
 
@@ -70,7 +79,7 @@ export default {
 
 <style scoped>
     #risk-home {
-        height: 100%;
+        height: 100vh;
         width: 100%;
 
         display: grid;
@@ -79,6 +88,7 @@ export default {
                 "AL  AC"
                 "AL2 AC"
         ;
+        overflow-y: hidden;
     }
 
     #al {

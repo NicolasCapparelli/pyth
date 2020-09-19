@@ -1,6 +1,10 @@
 const EVENTS = {
     assessmentListSelectedEvent: "assessmentListSelectedEvent",
-    clearSelectedAssessment: "clearSelectedAssessment"
+    clearSelectedAssessment: "clearSelectedAssessment",
+    closeAssessmentWidget: "closeAssessmentWidget",
+
+    likertAnswerSelected: "likertAnswerSelected"
+
 }
 
 export {EVENTS};

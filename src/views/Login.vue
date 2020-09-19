@@ -41,11 +41,27 @@
                     .auth()
                     .signInWithEmailAndPassword(this.email, this.password)
                     .then(data => {
-                        this.routeUser(parseInt(data.user.displayName))
+                        this.getUserData(data)
                     })
                     .catch(err => {
                         console.log(err.message);
                     });
+
+            },
+
+            getUserData: async function (data) {
+                console.log(data.user.uid);
+                let resp = await fetch(`https://api.pyth.app:5000/pythapi/authorized/api/getUser?userId=${data.user.uid}`, {
+                    mode: 'no-cors',
+                    headers: {
+                        'Access-Control-Allow-Origin': '*'
+                    }
+                })
+
+                let respData = await resp.json();
+                console.log(respData);
+                this.routeUser(respData.userType.id)
+
             },
 
             register: function () {
@@ -79,7 +95,7 @@
                         break;
                     case 2:
                         console.log("Admin");
-                        route = "Dashboard";
+                        route = "DashH";
                         break;
 
                     default:

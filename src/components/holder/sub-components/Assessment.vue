@@ -25,36 +25,6 @@
 import LikertQuestion from "./LikertQuestion";
 import {EVENTS} from "../../../util/events";
 
-let mockAssessment = {
-    "formId": "2",
-    "questions": [
-        {
-            "questionId": 4,
-            "question": "Vital signs (temperature, blood pressure, heart rate, and respiratory rate) are obtained and documented in the medical record."
-        },
-        {
-            "questionId": 23,
-            "question": "I have input on whether a staff member is hired or fired at my place of work."
-        },
-        {
-            "questionId": 28,
-            "question": "A physician or advanced practice clinician reviews all test results, signs and dates the result. For electronic health records, a electronic signature and date stamp is created. "
-        },
-        {
-            "questionId": 29,
-            "question": "Treatment plans are consistent with working diagnosis and documented in the medical record."
-        },
-        {
-            "questionId": 30,
-            "question": "How often do you utilize \"cloning\", \"copying and pasting\" and/or \"pulling forward\" to document in the medical record ."
-        },
-        {
-            "questionId": 42,
-            "question": "My organization asks patients for feedback on their experience with an after visit survey."
-        }
-    ]
-}
-
 export default {
     name: "Assessment",
     components: {
@@ -62,14 +32,18 @@ export default {
     },
 
     mounted() {
+        this.$root.$on(EVENTS.assessmentListSelectedEvent, data => {
+            this.assessment = data.assessment;
+            this.answer = new Array(this.assessment.questions.length);
+        })
+
         this.$root.$on(EVENTS.likertAnswerSelected, data => {
             this.handleLikertAnswer(data);
         })
-        this.answer = new Array(this.assessment.questions.length);
     },
 
     data: () => ({
-        assessment: mockAssessment,
+        assessment: {},
         answer: {}
     }),
 
@@ -94,7 +68,7 @@ export default {
         },
 
         submitAssessment: function() {
-            console.log("Answer");
+            console.log("Answers");
             console.log(this.answer);
         }
 

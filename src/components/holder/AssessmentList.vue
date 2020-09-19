@@ -13,7 +13,7 @@
                         <v-icon color="#516db6">mdi-file</v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
-                        <v-list-item-title>{{assessment}}</v-list-item-title>
+                        <v-list-item-title>{{assessment.title}}</v-list-item-title>
                         <v-list-item-subtitle>{{`${info.subtitleWord} on 06/18/2020`}}</v-list-item-subtitle>
                     </v-list-item-content>
                 </v-list-item>
@@ -29,20 +29,55 @@ export default {
     name: "AssessmentList",
     props: {
         info: Object,
-        assessments: Array
+        assessmentIdList: Array
     },
 
     mounted() {
         this.$root.$on(EVENTS.clearSelectedAssessment, data => {
             this.handleClearEvent(data);
         })
+
     },
 
     data: () => ({
-        selected: -1
+        selected: -1,
+        assessments: []
     }),
 
+    watch: {
+        // whenever assessmentIdList changes, this function will run
+        assessmentIdList: function () {
+            console.log("CHANGED!!!!!!!!!!!");
+            if (this.assessmentIdList.length > 1) {
+                this.tradeAssessmentIds(this.assessmentIdList);
+            }
+        }
+    },
+
     methods: {
+        tradeAssessmentIds: async function (list) {
+            if (this.assessmentIdList.length < 1) {
+                console.log("TRADE CANCELED");
+                console.log("-----------");
+                return;
+            }
+
+            console.log("BEFORE TRADE");
+
+            let realAssessments = [];
+            for (let formId of list) {
+                let response = await fetch(`https://api.pyth.app:5000/pythapi/unauthorized/api/getFormQuestions?formId=${formId}`)
+                let respData = await response.json();
+                realAssessments.push(respData);
+            }
+
+            this.assessments = realAssessments;
+            console.log("AFTER TRADE");
+            console.log(this.assessments);
+            console.log("-----------");
+            this.$forceUpdate();
+        },
+
         handleClearEvent: function (data){
             if (data === this.info.id) {
                 this.selected = -1;

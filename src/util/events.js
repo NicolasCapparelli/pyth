@@ -3,7 +3,9 @@ const EVENTS = {
     clearSelectedAssessment: "clearSelectedAssessment",
     closeAssessmentWidget: "closeAssessmentWidget",
 
-    likertAnswerSelected: "likertAnswerSelected"
+    likertAnswerSelected: "likertAnswerSelected",
+
+    assessmentListReady: "assessmentListReady",
 
 }
 

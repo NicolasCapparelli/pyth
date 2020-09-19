@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <h2>This is page Home</h2>
+    <h2>&nbsp;Access Pyth Risk Assessment Platform</h2>This is a restricted site. Please log in to access our platform.<br><img src="/assets/warning.png" width=200>
   </div>
 </template>
 

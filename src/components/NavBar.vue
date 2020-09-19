@@ -2,8 +2,8 @@
     <div style="width: 100%; height: auto;">
         <v-app-bar id="toolbar" app hide-on-scroll elevation="2">
             <v-app-bar-nav-icon @click.stop="showNavigation = !showNavigation"></v-app-bar-nav-icon>
-            <v-spacer></v-spacer>
-            <v-toolbar-title style="font-weight: bolder; text-align: start">Pyth</v-toolbar-title>
+            <v-spacer></v-spacer><img src="../assets/logo.svg" width=100>
+            <v-toolbar-title style="font-weight: bolder; text-align: start">Risk Assessment Platform</v-toolbar-title>
             <v-spacer></v-spacer>
         </v-app-bar>
 
@@ -19,7 +19,7 @@
                 </v-list-item-avatar>
                 <br>
                 <h2>Pyth</h2>
-                <h3>v1.0</h3>
+                <h3>Risk Assessment v1.0</h3>
             </div>
 
             <v-divider></v-divider>

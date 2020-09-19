@@ -1,6 +1,6 @@
 <template>
     <div class="likert-question">
-        <span class="question-text">{{question.question}}</span>
+        <span class="question-text">{{`${questionNum + 1}. ${question["question"]}`}}</span>
         <div class="boxes-container">
             <div class="box"
                  v-for="num in scale"
@@ -21,10 +21,13 @@
 </template>
 
 <script>
+import {EVENTS} from "../../../util/events";
+
 export default {
     name: "LikertQuestion",
     props: {
-        question: Object
+        question: Object,
+        questionNum: Number
     },
     data: () => ({
         selected: -1,
@@ -33,14 +36,22 @@ export default {
 
     methods: {
         scaleClicked: function (numSelected) {
+
             if (this.selected === numSelected) {
                 this.selected = -1;
             } else {
                 this.selected = numSelected
             }
+
+            let data = {
+                question: this.question,
+                index: this.questionNum,
+                answer: numSelected
+            }
+
+            this.$root.$emit(EVENTS.likertAnswerSelected, data);
         }
     }
-
 }
 </script>
 
@@ -52,12 +63,13 @@ export default {
         flex-direction: column;
         align-items: center;
         justify-content: space-between;
-        padding: 16px 0;
+        padding: 16px 4px;
         border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     }
     .question-text {
         margin-bottom: 1rem;
         margin-right: auto;
+        font-weight: bold;
     }
 
     .boxes-container {

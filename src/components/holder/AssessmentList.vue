@@ -52,7 +52,9 @@ export default {
         assessmentClicked: function (clickedAssessment) {
             let data = {
                 source: this.info.id,
-                assessment: clickedAssessment
+                assessment: clickedAssessment,
+                selected: this.selected
+
             }
             this.$root.$emit(EVENTS.assessmentListSelectedEvent, data);
         }

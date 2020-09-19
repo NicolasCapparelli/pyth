@@ -14,15 +14,34 @@
 <script>
 
 import Assessment from "./sub-components/Assessment";
+import {EVENTS} from "../../util/events";
 
 export default {
     name: "AssessmentContainer",
     components: {
         Assessment
     },
+    mounted() {
+        this.$root.$on(EVENTS.assessmentListSelectedEvent, data => {
+            this.handleSelectedAssessment(data)
+        })
+
+        this.$root.$on(EVENTS.closeAssessmentWidget, () => {
+            this.isEmpty = true;
+        })
+    },
     data: () => ({
-       isEmpty: false
+       isEmpty: true
     }),
+
+    methods: {
+        handleSelectedAssessment: function (data) {
+            this.isEmpty = false;
+            // TODO: API CALL WITH FORM ID
+            console.log("tes");
+            console.log(data);
+        }
+    }
 }
 </script>
 
@@ -33,10 +52,12 @@ export default {
 
     .assessment-container {
         height: 100%;
+        max-height: 100%;
         width: 700px;
         display: flex;
         flex-direction: column;
         align-items: center;
+        overflow-y: hidden;
     }
 
     #empty-state-container {

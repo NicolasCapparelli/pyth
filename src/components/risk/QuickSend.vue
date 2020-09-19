@@ -8,11 +8,15 @@
                 <v-combobox
                         v-model="recipients"
                         :items="items"
-                        label="I use chips"
+                        label="Recipient Emails"
                         multiple
                         chips
                         full-width
-                        id="recipients"
+                        class="RECIPE"
+                        v-on:update:search-input="updateUserSearch($event)"
+                        :search-input.sync="search"
+                        @change="search = ''"
+                        >
                 ></v-combobox>
             </div>
             <div id="select-form-container">
@@ -25,7 +29,7 @@
                     >
                         <template v-slot:default="{ active }">
                             <v-list-item-content>
-                                <v-list-item-title>{{formType}}</v-list-item-title>
+                                <v-list-item-title>{{formType.title}}</v-list-item-title>
                                 <v-list-item-subtitle></v-list-item-subtitle>
                             </v-list-item-content>
                             <v-list-item-action>
@@ -33,7 +37,7 @@
                                         :input-value="active"
                                         color="#fa8072"
                                         v-model="selectedForms"
-                                        :value="formType"
+                                        :value="formType.id"
                                 ></v-checkbox>
                             </v-list-item-action>
                         </template>
@@ -54,27 +58,63 @@
 <script>
     export default {
         name: "QuickSend",
+        mounted() {
+            this.getForms();
+        },
         data: () => ({
-            formTypes: [
-                "Lorem",
-                "Ipsum",
-                "Dolor"
-            ],
-
+            formTypes: [],
             selectedForms: [],
 
-            recipients: ['doctor@email.com', 'risk@email.com'],
-            items: [
-                'doctor@email.com',
-                'risk@email.com',
-                'director@email.com',
-                'mcdonalds.spicynuggs@email.com',
-            ],
+            recipients: [],
+            items: [],
         }),
         methods: {
-            sendForms: function () {
-                console.log("Sending Forms to", this.recipients);
-            }
+
+            searchUsers: async function () {
+
+            },
+
+            updateUserSearch: async function (event) {
+                let response = await fetch(`https://api.pyth.app:5000/pythapi/authorized/api/searchPolicyHolders?search=${event}`);
+                let respData = await response.json();
+                let userList = []
+                for (let user of respData) {
+                    userList.push(user.email);
+                }
+                this.items = userList;
+            },
+
+            getForms: async function () {
+                let response = await fetch('https://api.pyth.app:5000/pythapi/unauthorized/api/getForms');
+                this.formTypes = await response.json();
+            },
+
+            sendForms: async function () {
+                let uidList = [];
+                for (let recipientEmail of this.recipients) {
+                    let uid = await this.getUidFromEmail(recipientEmail);
+                    uidList.push(uid);
+                }
+
+                for (let user of uidList) {
+                    for (let formId of this.selectedForms) {
+                        await this.sendFormToUid(user, formId);
+                    }
+                }
+            },
+
+            getUidFromEmail: async function (email){
+                let response = await fetch(`https://api.pyth.app:5000/pythapi/authorized/api/searchPolicyHolders?search=${email}`);
+                let respData = await response.json();
+                return respData[0];
+            },
+
+            sendFormToUid: async function (user, formId){
+                console.log(user.uid, formId);
+                let response = await fetch(`https://api.pyth.app:5000/pythapi/authorized/api/getUser?userId=${user.uid}&formId=${formId}`);
+                console.log(response.status);
+            },
+
         }
     }
 </script>
@@ -100,6 +140,7 @@
     }
 
     #main-content {
+        height: 90%;
         display: flex;
         flex-direction: column;
         align-items: flex-start;
@@ -119,21 +160,26 @@
         justify-content: flex-start;
     }
 
-    #recipients {
+    .RECIPE {
         min-width: 100% !important;
     }
 
     #select-form-container {
+        height: 90%;
         width: 100%;
         display: flex;
         flex-direction: column;
         align-items: flex-start;
         justify-content: flex-start;
+        overflow: hidden;
     }
 
     #formList {
+        height: 100%;
         width: 100%;
         border: 1px #C4C4C4 solid;
+        overflow: scroll;
+
     }
 
     .formSelector {

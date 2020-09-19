@@ -4,13 +4,13 @@
         <AssessmentList
             id="al"
             :info="pendingInfo"
-            :assessments="pendingAssessments"
+            :assessmentIdList="pendingAssessments"
         />
 
         <AssessmentList
             id="al2"
             :info="completedInfo"
-            :assessments="completedAssessments"
+            :assessmentIdList="completedAssessments"
         />
 
         <AssessmentContainer id="AC"/>
@@ -21,6 +21,8 @@
 import AssessmentList from "./AssessmentList";
 import AssessmentContainer from "./AssessmentContainer";
 import {EVENTS} from "../../util/events";
+import firebase from "firebase";
+
 
 export default {
     name: "RiskHome",
@@ -31,8 +33,13 @@ export default {
 
     mounted() {
         this.$root.$on(EVENTS.assessmentListSelectedEvent, data => {
-            this.handleAssessmentSelected(data)
+            this.handleAssessmentSelected(data);
         });
+
+    },
+
+    created() {
+        this.getAssessments();
     },
 
     data: () => ({
@@ -44,11 +51,7 @@ export default {
             id: 0
 
         },
-        pendingAssessments: [
-            {
-                formId: ""
-            }
-        ],
+        pendingAssessments: [],
 
         // COMPLETED
         completedInfo: {
@@ -57,11 +60,7 @@ export default {
             id: 1
 
         },
-        completedAssessments: [
-            {
-                formId: ""
-            }
-        ],
+        completedAssessments: [],
     }),
 
     methods: {
@@ -70,9 +69,17 @@ export default {
             // Logic to unselect form from other AssessmentList component
             let listToClear = (data.source) === 1 ? 0 : 1;
             this.$root.$emit(EVENTS.clearSelectedAssessment, listToClear);
+        },
 
+        getAssessments: async function (){
+            let userID = firebase.auth().currentUser.uid;
 
-        }
+            let response = await fetch(`https://api.pyth.app:5000/pythapi/authorized/api/getUser?userId=${userID}`)
+            let respData = await response.json();
+
+            this.pendingAssessments = respData["pending_forms"];
+            this.completedAssessments = respData["completed_forms"];
+        },
     }
 }
 </script>

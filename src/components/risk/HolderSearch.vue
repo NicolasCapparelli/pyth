@@ -14,13 +14,15 @@
             </div>
         </div>
 
-        <div v-if="mode <= 1" id="search-phase-container">
+        <div v-if="mode <= 2" id="search-phase-container">
             <div id="search-container">
                 <span>{{mode === 0 ? "Search by email" : "Search by name"}}</span>
                 <v-text-field
                         :placeholder="mode === 0 ? 'example@email.com':'John Smith'"
                         outlined
                         id="search-bar"
+                        v-model="persistedSearch"
+                        v-on:input="updateSearchArray($event)"
                 ></v-text-field>
             </div>
 
@@ -36,11 +38,28 @@
                             v-on:click="navigateTo(institution)"
                             v-ripple
                     >
-                        <img class="institution-img" :src="institution.img" :alt="institution.name">
+                        <img class="institution-img" :src="institution.img_url" :alt="institution.name">
                     </div>
                 </div>
 
                 <!-- Search by name  -->
+                <div v-else-if="mode === 1" class="institution-grid">
+                    <div
+                            class="policy-holder-grid-item"
+                            v-for="(policyHolder, index) in policyHolders"
+                            :key="index"
+                            v-on:click="openHolderProfileFor(policyHolder)"
+                            v-ripple
+                    >
+                        <v-avatar size="72">
+                            <img class="policy-holder-image" :src="policyHolder.img_url" :alt="policyHolder.username">
+                        </v-avatar>
+                        <span class="policy-holder-name">{{policyHolder.username}}</span>
+
+                    </div>
+                </div>
+
+                <!-- Search by email  -->
                 <div v-else class="institution-grid">
                     <div
                             class="policy-holder-grid-item"
@@ -50,9 +69,9 @@
                             v-ripple
                     >
                         <v-avatar size="72">
-                            <img class="policy-holder-image" :src="policyHolder.img" :alt="policyHolder.name">
+                            <img class="policy-holder-image" :src="policyHolder.img_url" :alt="policyHolder.username">
                         </v-avatar>
-                        <span class="policy-holder-name">{{policyHolder.name}}</span>
+                        <span class="policy-holder-name">{{policyHolder.username}}</span>
 
                     </div>
                 </div>
@@ -70,6 +89,9 @@ export default {
     components: {
         HolderProfile
     },
+    mounted() {
+        this.getInstitutions();
+    },
 
     computed: {
         title: function () {
@@ -79,6 +101,8 @@ export default {
                 case 1:
                     return `${this.selectedInstitute} Search`;
                 case 2:
+                    return "Policy Holder Search";
+                case 3:
                     return ` Profile | ${this.selectedPolicyHolder.name}`;
                 default:
                     return "Policy Holder Search";
@@ -90,50 +114,28 @@ export default {
         selectedInstitute: "",
         selectedPolicyHolder: {},
 
-        institutions: [
-            {
-                name: "WellStar",
-                img: "/assets/institutions/wellstar.png"
-            },
+        institutions: [],
+        policyHolders: [],
 
-            {
-                name: "Emory",
-                img: "/assets/institutions/emory.png"
-            },
-
-            {
-                name: "St Joseph",
-                img: "/assets/institutions/joseph.png"
-            }
-        ],
-
-        policyHolders: [
-            {
-                name: "Marcus Smith",
-                img: "https://thedisneyblog.com/wp-content/uploads/2019/05/jemaine-clement-avatar-headshot.jpg"
-            },
-
-            {
-                name: "John Leider",
-                img: "https://avatars0.githubusercontent.com/u/9064066?v=4&s=460"
-            },
-
-            {
-                name: "Jaylen John",
-                img: "https://cdn.vuetifyjs.com/images/john.jpg"
-            },
-        ]
+        persistedSearch: ""
     }),
 
     methods: {
         navigateTo: function (institution) {
             this.mode = 1;
             this.selectedInstitute = institution.name;
-            console.log(institution);
+            this.getPolicyHoldersForInstitute(this.selectedInstitute);
         },
 
         backClicked: function () {
             this.mode -= 1;
+            if (this.mode === 2) {
+                this.updateSearchArray(this.persistedSearch);
+            } else if (this.mode === 1) {
+                this.mode = 0;
+                this.persistedSearch = "";
+            }
+            this.policyHolders = [];
         },
 
         homeClicked: function () {
@@ -142,7 +144,31 @@ export default {
 
         openHolderProfileFor: function (policyHolder) {
             this.selectedPolicyHolder = policyHolder;
-            this.mode = 2;
+            this.mode = 3;
+        },
+
+        // REQUESTS
+        getInstitutions: async function (){
+            let response = await fetch('https://api.pyth.app:5000/pythapi/authorized/api/getInstitutions')
+            this.institutions = await response.json();
+        },
+
+        getPolicyHoldersForInstitute: async function(institute) {
+            let response = await fetch(`https://api.pyth.app:5000/pythapi/authorized/api/getPolicyHoldersByCompany?company=${institute}`);
+            this.policyHolders = await response.json();
+        },
+
+        updateSearchArray: async function (event) {
+            this.persistedSearch = event;
+            if (event.length < 1) {
+                this.mode = 0;
+                return;
+            } else {
+                this.mode = 2;
+            }
+
+            let response = await fetch(`https://api.pyth.app:5000/pythapi/authorized/api/searchPolicyHolders?search=${event}`);
+            this.policyHolders = await response.json();
         }
     }
 
@@ -212,6 +238,10 @@ export default {
         box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.20);
     }
 
+    .institution-img {
+        width: 90%;
+    }
+
     .policy-holder-grid-item {
         height: 150px;
         width: 150px;
@@ -225,6 +255,8 @@ export default {
 
     .policy-holder-image {
         object-fit: cover;
+        height: 100%;
+
     }
 
     .policy-holder-name {

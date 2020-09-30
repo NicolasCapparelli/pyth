@@ -1,5 +1,7 @@
 # pyth
 
+### Website is currently running at [Pyth.app](https://pyth.app)
+
 ## Project setup
 ```
 npm install

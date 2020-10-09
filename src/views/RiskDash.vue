@@ -8,11 +8,18 @@
 <script>
 
 import RiskHome from "../components/risk/RiskHome";
+import firebase from "firebase";
 
 export default {
     name: "RiskDash",
     components: {
         RiskHome
+    },
+
+    mounted() {
+        if (firebase.auth().currentUser === null) {
+            this.$router.replace({ name: "Login" });
+        }
     }
 }
 </script>

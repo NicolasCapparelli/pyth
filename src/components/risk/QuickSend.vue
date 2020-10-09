@@ -111,7 +111,9 @@
 
             sendFormToUid: async function (user, formId){
                 console.log(user.uid, formId);
-                let response = await fetch(`https://api.pyth.app:5000/pythapi/authorized/api/getUser?userId=${user.uid}&formId=${formId}`);
+                let response = await fetch(`https://api.pyth.app:5000/pythapi/authorized/api/sendForm?userId=${user.uid}&formId=${formId}`, {
+                    method: "POST"
+                });
                 console.log(response.status);
             },
 
